@@ -2,3 +2,5 @@ __pycache__
 .venv
 config.yaml
 temp
+*.session
+*.session-journal
