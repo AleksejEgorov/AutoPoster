@@ -5,9 +5,9 @@ from autoposter_classes import Post,PostEncoder
 from autoposter_common import get_last_id, write_last_id, make_content_dir
 
 def get_new_vk_posts(config):
-    content_dir = make_content_dir(config, 'vk')
+    content_dir = make_content_dir(config)
     posts = []
-    last_id = get_last_id(config, 'vk')
+    last_id = get_last_id(config)
     vk_api = vk.API(access_token=config['vk']['token'])
     
     offset = 0
@@ -29,7 +29,7 @@ def get_new_vk_posts(config):
         print('No new VK posts')
         return posts
     
-    for post in new:      
+    for post in new:
         if 'attachments' in post:
             current_post = Post(post['date'])
             current_post.text = post['text']
@@ -50,8 +50,7 @@ def get_new_vk_posts(config):
                 current_post.add_photo(photo['id'], photo_file)
             
             posts.append(current_post)
-
-    write_last_id(config, 'vk', posts[0].id)
+            
     return posts
 
 

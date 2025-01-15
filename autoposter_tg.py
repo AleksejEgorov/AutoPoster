@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from telethon import TelegramClient, sync
 from autoposter_classes import Post, PostEncoder
 from autoposter_common import get_last_id, write_last_id, make_content_dir
@@ -7,29 +8,27 @@ from autoposter_common import get_last_id, write_last_id, make_content_dir
 def get_new_tg_posts(config):
     client = TelegramClient('autoposter.session', config['telegram']['api_id'], config['telegram']['api_hash'])
     posts = []
-    last_id = get_last_id(config, 'tg')
-    content_dir = make_content_dir(config, 'tg')
+    last_id = get_last_id(config)
+    offset_date = datetime.fromtimestamp(last_id)
+    content_dir = make_content_dir(config)
 
     async def get_new_messages():
-        async for message in client.iter_messages(config['telegram']['channel_id'], min_id=last_id):
+        async for message in client.iter_messages(config['telegram']['channel_id'], limit=100):
+            if message.date.timestamp() <= last_id:
+                continue
+            
             current_post = None
             photo_file_path = None
-            print(f'Processing tg message id={message.id}, grouped_id={message.grouped_id}, text="{message.text}"')
+            message_date = int(message.date.timestamp())            
+            print(f'Processing tg message id={message.id}, grouped_id={message.grouped_id}, date={message_date}, text="{message.text}"')
+            photo_file_path = os.path.join(content_dir, f'{message_date}', f'{message.id}.jpg')
 
-            if message.grouped_id is not None:
-                current_post = list(filter(lambda post: post.id == message.grouped_id, posts))
-                if current_post:
-                    current_post = current_post[0]
-                else:
-                    current_post = Post(message.grouped_id)
-                    current_post.last_message_id = message.id
-                    posts.append(current_post)
-
-                photo_file_path = os.path.join(content_dir, f'{message.grouped_id}', f'{message.id}.jpg')
+            current_post = list(filter(lambda post: post.id == message_date, posts))
+            if current_post:
+                current_post = current_post[0]
             else:
-                current_post = Post(message.id)
-                photo_file_path = os.path.join(content_dir, f'{message.id}.jpg')
-                posts.append(current_post)
+                current_post = Post(message_date)
+                posts.append(current_post)    
 
             if message.text != '':
                 current_post.text = message.text
@@ -39,14 +38,8 @@ def get_new_tg_posts(config):
     with client:
         client.loop.run_until_complete(get_new_messages())
 
-    if not posts:
+    if __name__ == '__main__' and not posts:
         print('No new posts')
-        return posts
-
-    if posts[0].last_message_id is not None:
-        write_last_id(config, 'tg', posts[0].last_message_id)
-    else:
-        write_last_id(config, 'tg', posts[0].id)
 
     return posts
 
