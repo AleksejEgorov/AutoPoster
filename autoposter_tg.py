@@ -62,6 +62,7 @@ def repost_to_tg(config: dict, posts: list[Post]):
         medias[0].parse_mode = 'markdown'
         
         bot.send_media_group(config['telegram']['channel_id'], medias)
+        logger.info(f"Post id={post.id} ({len(medias)} photos) reposted to Telegram channel {config['telegram']['channel_id']}")
 
 if __name__ == '__main__':
     import yaml
