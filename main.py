@@ -74,6 +74,7 @@ if __name__ == '__main__':
     
     while True:
         repost_cycle(config)
+        logger.debug(f'Sleep {config['pool_interval']}')
         time.sleep(config['pool_interval'])
-        logger.debug(f'Sleep {config['repost_interval']}')
+        
     
