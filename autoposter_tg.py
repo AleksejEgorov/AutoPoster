@@ -1,15 +1,16 @@
 import os
+import logging
 from datetime import datetime
 from telethon import TelegramClient, sync
 from autoposter_classes import Post, PostEncoder
-from autoposter_common import get_last_id, write_last_id, make_content_dir
+from autoposter_common import make_content_dir, get_last_id, reformat_post_text
 
+logger = logging.getLogger(__name__)
 
 def get_new_tg_posts(config):
     client = TelegramClient('autoposter.session', config['telegram']['api_id'], config['telegram']['api_hash'])
     posts = []
     last_id = get_last_id(config)
-    offset_date = datetime.fromtimestamp(last_id)
     content_dir = make_content_dir(config)
 
     async def get_new_messages():
@@ -20,7 +21,7 @@ def get_new_tg_posts(config):
             current_post = None
             photo_file_path = None
             message_date = int(message.date.timestamp())            
-            print(f'Processing tg message id={message.id}, grouped_id={message.grouped_id}, date={message_date}, text="{message.text}"')
+            logger.info(f'Processing tg message id={message.id}, grouped_id={message.grouped_id}, date={message_date}, text="{message.text}"')
             photo_file_path = os.path.join(content_dir, f'{message_date}', f'{message.id}.jpg')
 
             current_post = list(filter(lambda post: post.id == message_date, posts))
@@ -39,7 +40,7 @@ def get_new_tg_posts(config):
         client.loop.run_until_complete(get_new_messages())
 
     if __name__ == '__main__' and not posts:
-        print('No new posts')
+        logger.debug('No new posts from tg')
 
     return posts
 
@@ -49,11 +50,11 @@ def repost_to_tg(config, posts):
         for post in posts:
             photos = list(map(lambda photo: photo.file_path, post.photos))
             try:
-                client.send_file(config['telegram']['channel_id'], photos, caption=post.text, parse_mode='markdown')
-                print(f"Post id={post.id} ({len(photos)} photos) reposted to Telegram channel {config['telegram']['channel_id']}")
+                client.send_file(config['telegram']['channel_id'], photos, caption=reformat_post_text(config, post, 'tg'), parse_mode='markdown')
+                logger.info(f"Post id={post.id} ({len(photos)} photos) reposted to Telegram channel {config['telegram']['channel_id']}")
             except Exception as e:
-                print(f'Error while sending post {post.id}: {e}')
-    return
+                logger.error(f'Error while sending post {post.id}: {e}')
+                raise e
 
 
 if __name__ == '__main__':
