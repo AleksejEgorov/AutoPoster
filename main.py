@@ -69,6 +69,7 @@ if __name__ == '__main__':
         level=str(config['log_level']).upper(), 
         format=config['log_format']
     )
+    logger.info('Autoposter started')
     
     
     os.makedirs(config['temp_dir'], exist_ok=True)
