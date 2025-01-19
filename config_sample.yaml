@@ -1,6 +1,6 @@
 temp_dir: /opt/autoposter/temp
 # Use 'vk' or 'tg'
-source: vk # Only VK supported now.
+source: vk # Use tg carefully
 pool_interval: 60
 log_level: info
 log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -16,7 +16,7 @@ vk:
   group_id: 
 instagram:
   # https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/create-a-meta-app-with-instagram#api-setup-with-instagram-login
-  app_token: IGAB444gzGnfxBZAE9oemR4SDZASSy13TkluTUdJMk5MdjBZAOXNqaG5ybENqVDZAONDdRdndmdWw4cXpPWWNaZAElBOXRvQnF1eFVyeE41alBFUUNMcU5qQnVCTkJWbXZAtUlJKZAF8xWEJOQjYtZAFRMSVJVN05WajVmRW1iVEk1cHUzOAZDZD
+  app_token: 
   
   proxy: 
   web_photo_location: https://ap-media.apt-1088.online
