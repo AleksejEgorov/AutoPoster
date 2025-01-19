@@ -5,7 +5,6 @@ import logging
 from autoposter_common import write_last_id, cleanup_content, get_photo_tags
 from autoposter_vk import get_new_vk_posts, repost_to_vk
 from autoposter_tg import repost_to_tg
-# from autoposter_tg import get_new_tg_posts
 from autoposter_inst import repost_to_instagram
 
 
@@ -13,9 +12,6 @@ def repost_cycle(config: dict) -> None:
     if config['source'] == 'vk':
         logger.debug('Getting new posts from VK')
         new_posts = sorted(get_new_vk_posts(config), key=lambda post: post.id)
-    # elif config['source'] == 'tg':
-    #     logger.debug('Getting new posts from Telegram')
-    #     new_posts = sorted(get_new_tg_posts(config), key=lambda post: post.id)
     else:
         logger.error(f'Source {config['source']} is not unknown')
         new_posts = None
@@ -46,13 +42,6 @@ def repost_cycle(config: dict) -> None:
                     repost_status['inst'] = True
                 except Exception as e:
                     logger.error(f'Error while reposting to Instagram: {e}')
-                    time.sleep(5)
-            if not repost_status['vk']:
-                try:
-                    repost_to_vk(config, new_posts)
-                    repost_status['vk'] = True
-                except Exception as e:
-                    logger.error(f'Error while reposting to VK: {e}')
                     time.sleep(5)
             
         write_last_id(config, new_posts[-1].id)

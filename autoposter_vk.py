@@ -52,18 +52,6 @@ def get_new_vk_posts(config):
             posts.append(current_post)
             
     return posts
-
-
-def repost_to_vk(config, posts):
-    vk_api = vk.API(access_token=config['vk']['token'])
-    for post in posts:
-        photos = list(map(lambda photo: photo.file_path, post.photos))
-        try:
-            vk_api.wall.post(owner_id=config['vk']['group_id'], attachments=photos, message=post.text)
-            logger.info(f"Post id={post.id} ({len(photos)} photos) reposted to VK group {config['vk']['group_id']}")
-        except Exception as e:
-            print(f'Error while sending post {post.id}: {e}')
-            raise e
     
     
 if __name__ == '__main__':
