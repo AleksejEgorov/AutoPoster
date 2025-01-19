@@ -2,6 +2,12 @@
 
 AutoPoster is a tool for automating the reposting of content across multiple social media platforms such as Telegram, VK, and Instagram.
 
+## :warning: CAUTION :warning:
+
+This branch contains code for grabbing telegram posts as source with telethon library. Sometimes it can cause force logoff from your account on all your devices. Thesee changes are commenten now, but you can use it without any warranty.
+
+You have been informed.
+
 ## Project Structure
 
 - **autoposter_common.py**: Contains common utility functions used across the project.
