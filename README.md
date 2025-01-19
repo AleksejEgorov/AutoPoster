@@ -30,6 +30,52 @@ pip install -r requirements.txt
 deactivate
 ```
 
+### Create service
+
+First, create system user:
+
+```bash
+sudo useradd -r -s /bin/false botrunner
+```
+
+Next, create systemd unit file `/etc/systemd/system/autoposter.service` with:
+
+```ini
+[Unit]
+Description=Autoposter to Telegram and Instagram
+After=network.target
+
+[Service]
+User=botrunner
+Group=botrunner
+Type=simple
+WorkingDirectory=/opt/autoposter
+ExecStart=/opt/autoposter/.venv/bin/python3 /opt/autoposter/main.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
 ### Configuration
 
 Copy `config_sample.yaml` to `config.yaml` and populate with your values. Config contains sensitive information, so secure it with `chmod 600`.
+
+### Run
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable autoposter
+sudo systemctl start autoposter
+sudo systemctl status autoposter
+# and take a look to the log:
+journalctl -xeu autoposter
+```
+
+When configuration changed, don't forget to restart sercice with `sudo systemctl restart autoposter`.
+
+### Update
+
+```bash
+/opt/autoposter/updater.sh
+```
