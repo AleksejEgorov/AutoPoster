@@ -87,6 +87,8 @@ async def translate_text(text, src_lang = 'ru', dst_lang = 'en'):
 
 def reformat_post_text(config: dict, post: Post, target: str) -> str:
     text = post.text
+    if not text:
+        return ''
     replaces = config['replaces']
     vk_link_pattern = re.compile(r'\[id\d+\|[\w\s]+\]')
     vk_links = re.findall(vk_link_pattern, text)
