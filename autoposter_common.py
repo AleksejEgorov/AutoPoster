@@ -46,7 +46,7 @@ def cleanup_content(config, posts):
             logger.error(f'Cannot remove content from {post_content}: {e}')
 
 
-def get_photo_tags(config, posts: list[Post]):
+def get_photo_tags(config, posts: list[Post]) -> list[str]:
     immaga_auth = (config['imagga']['api_key'], config['imagga']['api_secret'])
 
     for post in posts:
@@ -69,9 +69,11 @@ def get_photo_tags(config, posts: list[Post]):
             logger.debug(f'tags: {photo.tags}')
             post_tags.extend(photo_tags)
         post.tags = list(
-            map(
-                lambda tag_data: tag_data['tag']['en'], 
-                sorted(post_tags, key=lambda tag_data: tag_data['confidence'], reverse=True)
+            set(
+                map(
+                    lambda tag_data: tag_data['tag']['en'], 
+                    sorted(post_tags, key=lambda tag_data: tag_data['confidence'], reverse=True)
+                )
             )
         )
 
