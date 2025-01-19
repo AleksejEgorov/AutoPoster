@@ -3,7 +3,7 @@ import os
 import time
 import logging
 from autoposter_common import write_last_id, cleanup_content, get_photo_tags
-from autoposter_vk import get_new_vk_posts, repost_to_vk
+from autoposter_vk import get_new_vk_posts
 from autoposter_tg import repost_to_tg
 from autoposter_inst import repost_to_instagram
 
