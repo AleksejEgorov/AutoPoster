@@ -104,7 +104,6 @@ def reformat_post_text(config: dict, post: Post, target: str) -> str:
                 logger.debug(f'VK link {vk_link} replaced with [{vk_name}](https://vk.com/{vk_id})')
     elif target == 'inst':
         text = text.replace('В кадре:', 'Md:')
-        text = asyncio.run(translate_text(text))
         for vk_link in vk_links:
             vk_id, vk_name = vk_link.strip('[]').split('|')
             if vk_id in replaces.keys():
@@ -113,6 +112,7 @@ def reformat_post_text(config: dict, post: Post, target: str) -> str:
             else:
                 text = text.replace(vk_link, vk_name)
                 logger.debug(f'VK link {vk_link} replaced with {vk_name}')
+        text = asyncio.run(translate_text(text))
     return text
 
 
