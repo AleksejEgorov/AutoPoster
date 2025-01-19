@@ -50,25 +50,30 @@ def get_photo_tags(config, posts: list[Post]):
     immaga_auth = (config['imagga']['api_key'], config['imagga']['api_secret'])
 
     for post in posts:
-        if __name__ == '__main__':
-            print(f'Processing post {post.id}')
-        
+        logger.debug(f'Processing post {post.id}')
+        post_tags = []
         for photo in post.photos:
-            if __name__ == '__main__':
-                print(f'Photo {photo.id}')
+            logger.debug(print(f'Photo {photo.id}'))
             
             tag_response = requests.post(
                 'https://api.imagga.com/v2/tags',
                 auth=immaga_auth,
                 files={'image': open(photo.file_path, 'rb')}
             )
-            
             logger.info(f'{len(tag_response.json()['result'].get('tags'))} tags received for photo {photo.id}')
-            for tag in tag_response.json()['result'].get('tags'):
+            
+            photo_tags = tag_response.json()['result'].get('tags')
+            
+            for tag in photo_tags:
                 photo.tags.append(tag['tag']['en'])
-            if __name__ == '__main__':
-                print('tags: ', photo.tags)
-            post.tags.extend(photo.tags)
+            logger.debug(f'tags: {photo.tags}')
+            post_tags.extend(photo_tags)
+        post.tags = list(
+            map(
+                lambda tag_data: tag_data['tag']['en'], 
+                sorted(post_tags, key=lambda tag_data: tag_data['confidence'], reverse=True)
+            )
+        )
 
 
 async def translate_text(text, src_lang = 'ru', dst_lang = 'en'):

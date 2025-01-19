@@ -1,6 +1,5 @@
 import os
 import logging
-import random
 import requests
 from PIL import Image, ImageOps
 from autoposter_classes import Post
@@ -46,7 +45,8 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
     for post in posts:
         # prepare tag list:
         tags = config['instagram']['default_tags']
-        post_tags = random.sample(list(filter(lambda tag: ' ' not in tag, post.tags)), config['instagram']['total_tags_count'] - len(tags))
+        post_tags_count = config['instagram']['total_tags_count'] - len(tags) - 1
+        post_tags = list(filter(lambda tag: ' ' not in tag, post.tags))[0:post_tags_count]
         logger.debug(f'Post {post.id} selected tags: {post_tags}')
         tags.extend(post_tags)
         tags = list(map(lambda tag: f'#{tag}', tags))
