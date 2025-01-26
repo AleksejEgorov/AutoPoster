@@ -47,11 +47,11 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
         tags = config['instagram']['default_tags']
         post_tags_count = config['instagram']['total_tags_count'] - len(tags) - 1
         post_tags = list(filter(lambda tag: ' ' not in tag, post.tags))[0:post_tags_count]
-        logger.debug(f'Post {post.id} selected tags: {post_tags}')
+        logger.info(f'Post {post.id} selected tags: {post_tags}')
         tags.extend(post_tags)
         tags = list(map(lambda tag: f'#{tag}', tags))
         inst_text = f'{reformat_post_text(config, post, 'inst')}\n{" ".join(tags)}'
-        logger.debug(f'Post {post.id} prepared text: {inst_text}')
+        logger.info(f'Post {post.id} prepared text: {inst_text}')
         
         # prepare photo list
         inst_photos = []
