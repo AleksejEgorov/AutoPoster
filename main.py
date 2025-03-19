@@ -11,10 +11,14 @@ from autoposter_inst import repost_to_instagram
 def repost_cycle(config: dict) -> None:
     if config['source'] == 'vk':
         logger.debug('Getting new posts from VK')
-        new_posts = sorted(get_new_vk_posts(config), key=lambda post: post.id)
+        try: 
+            new_posts = sorted(get_new_vk_posts(config), key=lambda post: post.id)
+        except Exception as e:
+            logger.error(f'Cannot get posts from VK: {e}')
+            return
     else:
-        logger.error(f'Source {config['source']} is not unknown')
-        new_posts = None
+        logger.error(f'Source {config['source']} is unknown')
+        return
     
     if new_posts:
         repost_status = {
