@@ -52,8 +52,9 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
         logger.info('Post %s selected tags: %s', post.id, post_tags)
         tags.extend(post_tags)
         tags = list(map(lambda tag: f'#{tag}', tags))
+        logger.debug('Final tags list: %s', tags)
         inst_text = f'{reformat_post_text(config, post, 'inst')}\n{" ".join(tags)}'
-        logger.info('Post %s prepared text: %s', post.id, inst_text)
+        logger.info('Post %s prepared text: %s', post.id, inst_text.replace('\n','\\n'))
         
         # prepare photo list
         inst_photos = []
