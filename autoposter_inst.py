@@ -45,9 +45,11 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
     
     for post in posts:
         # prepare tag list:
-        tags = config['instagram']['default_tags']
+        tags = list()
+        tags.extend(config['instagram']['default_tags'])
         logger.debug('Source post %s tags are %s', post.id, post.tags)
         post_tags_count = config['instagram']['total_tags_count'] - len(tags) - 1
+        logger.debug('Post %s has %s mandatory tags, %s custom expected', post.id, len(tags), post_tags_count)
         post_tags = list(filter(lambda tag: ' ' not in tag, post.tags))[0:post_tags_count]
         logger.info('Post %s selected tags: %s', post.id, post_tags)
         tags.extend(post_tags)
