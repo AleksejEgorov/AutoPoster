@@ -58,7 +58,8 @@ def get_photo_tags(config, posts: list[Post]) -> None:
             tag_response = requests.post(
                 'https://api.imagga.com/v2/tags',
                 auth=immaga_auth,
-                files={'image': open(photo.file_path, 'rb')}
+                files={'image': open(photo.file_path, 'rb')},
+                timeout=10
             )
             logger.info(f'{len(tag_response.json()['result'].get('tags'))} tags received for photo {photo.id}')
             

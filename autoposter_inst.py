@@ -35,23 +35,25 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
             'access_token': config['instagram']['app_token'],
             'fields': 'user_id,username,account_type,name'
         },
-        proxies=proxies
+        proxies=proxies,
+        timeout=10
     )
     
     ig_id = inst_me.json()['user_id']
-    logger.debug(f'Instagram user ID is {ig_id}')
+    logger.debug('Instagram user ID is %s', ig_id)
     
     
     for post in posts:
         # prepare tag list:
         tags = config['instagram']['default_tags']
+        logger.debug('Source post %s tags are %s', post.id, post.tags)
         post_tags_count = config['instagram']['total_tags_count'] - len(tags) - 1
         post_tags = list(filter(lambda tag: ' ' not in tag, post.tags))[0:post_tags_count]
-        logger.info(f'Post {post.id} selected tags: {post_tags}')
+        logger.info('Post %s selected tags: %s', post.id, post_tags)
         tags.extend(post_tags)
         tags = list(map(lambda tag: f'#{tag}', tags))
         inst_text = f'{reformat_post_text(config, post, 'inst')}\n{" ".join(tags)}'
-        logger.info(f'Post {post.id} prepared text: {inst_text}')
+        logger.info('Post %s prepared text: %s', post.id, inst_text)
         
         # prepare photo list
         inst_photos = []
@@ -60,7 +62,7 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
             web_photo_path = f'{config["instagram"]['web_photo_location']}/{post.id}/{os.path.basename(local_photo_path)}'
             inst_photos.append(web_photo_path)
             
-        logger.debug(f'Post {post.id} photo web urls: {inst_photos}')
+        logger.debug('Post %s photo web urls: %s', post.id, inst_photos)
             
         # https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/content-publishing
         # https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media?locale=en_US
@@ -75,7 +77,8 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
                         'is_carousel_item': 'true',
                         'access_token': ig_token
                     },
-                    proxies=proxies
+                    proxies=proxies,
+                    timeout=10
                 )
                 child_containers.append(photo_container.json()['id'])
             carousel_container = requests.post(
@@ -86,7 +89,8 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
                     'children': ','.join(child_containers),
                     'access_token': ig_token
                 },
-                proxies=proxies
+                proxies=proxies,
+                timeout=10
             )
             
             inst_post = requests.post(
@@ -95,10 +99,11 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
                     'creation_id': carousel_container.json()['id'],
                     'access_token': ig_token
                 },
-                proxies=proxies
+                proxies=proxies,
+                timeout=10
             )
             
-            logger.info(f'Post {post.id} is reposted to Instagram with ID {inst_post.json()['id']}')
+            logger.info('Post %s is reposted to Instagram with ID %s', post.id, inst_post.json()['id'])
             
         else:
             # Single photo
@@ -109,7 +114,8 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
                     'caption': inst_text,
                     'access_token': ig_token
                 },
-                proxies=proxies
+                proxies=proxies,
+                timeout=10
             )
             inst_post = requests.post(
                 f'https://graph.instagram.com/v21.0/{ig_id}/media_publish',
@@ -117,17 +123,13 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
                     'creation_id': photo_container.json()['id'],
                     'access_token': ig_token
                 },
-                proxies=proxies
+                proxies=proxies,
+                timeout=10
             )
             
             logger.info(f'Post {post.id} is reposted to Instagram with ID {inst_post.json()['id']}')
-            
 
-        
-    
 
-        
-        
 if __name__ == '__main__':
     import yaml
     import os
