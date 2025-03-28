@@ -42,7 +42,7 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
     inst_me = requests.get(
         'https://graph.instagram.com/v21.0/me',
         params={
-            'access_token': config['instagram']['app_token'],
+            'access_token': ig_token,
             'fields': 'user_id,username,account_type,name'
         },
         proxies=proxies,
@@ -55,8 +55,7 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
 
     for post in posts:
         # prepare tag list:
-        tags = list()
-        tags.extend(config['instagram']['default_tags'])
+        tags = config['instagram']['default_tags'].copy()
         logger.debug('Source post %s tags are %s', post.id, post.tags)
         post_tags_count = config['instagram']['total_tags_count'] - len(tags) - 1
         logger.debug(

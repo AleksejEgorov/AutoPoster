@@ -5,7 +5,7 @@ import os
 import logging
 import urllib.request
 import vk
-from autoposter_classes import Post,PostEncoder
+from autoposter_classes import Post#,PostEncoder
 from autoposter_common import get_last_id, make_content_dir
 
 logger = logging.getLogger(__name__)

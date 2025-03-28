@@ -2,7 +2,6 @@
 This module contains telegram-related functions
 '''
 
-import os
 import logging
 import telebot
 from autoposter_classes import Post
@@ -35,6 +34,7 @@ def repost_to_tg(config: dict, posts: list[Post]):
         )
 
 # if __name__ == '__main__':
+#     import os
 #     import yaml
 #     from autoposter_vk import get_new_vk_posts
 
