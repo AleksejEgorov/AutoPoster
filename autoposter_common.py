@@ -60,8 +60,8 @@ def cleanup_content(config, posts: list[Post]):
         try:
             shutil.rmtree(post_content)
             logger.info('Post content removed from %s', post_content)
-        except OSError as e:
-            logger.error('Cannot remove content from %s: %s', post_content, e)
+        except OSError as err:
+            logger.error('Cannot remove content from %s: %s', post_content, err)
 
 
 def get_photo_tags(config, posts: list[Post]) -> None:
