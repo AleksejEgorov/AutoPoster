@@ -79,16 +79,16 @@ def get_new_vk_posts(config):
     return posts
 
 
-if __name__ == '__main__':
-    import yaml
-    import json
+# if __name__ == '__main__':
+#     import yaml
+#     import json
 
-    os.chdir(os.path.dirname(__file__))
+#     os.chdir(os.path.dirname(__file__))
 
-    with open('config.yaml', encoding='utf-8') as config_file:
-        app_config = yaml.load(config_file, Loader=yaml.FullLoader)
+#     with open('config.yaml', encoding='utf-8') as config_file:
+#         app_config = yaml.load(config_file, Loader=yaml.FullLoader)
 
-    os.makedirs(app_config['temp_dir'], exist_ok=True)
+#     os.makedirs(app_config['temp_dir'], exist_ok=True)
 
-    new_posts = get_new_vk_posts(app_config)
-    print(json.dumps(new_posts, cls=PostEncoder))
+#     new_posts = get_new_vk_posts(app_config)
+#     print(json.dumps(new_posts, cls=PostEncoder))
