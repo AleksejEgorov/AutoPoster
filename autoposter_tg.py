@@ -34,17 +34,17 @@ def repost_to_tg(config: dict, posts: list[Post]):
             config['telegram']['channel_id']
         )
 
-if __name__ == '__main__':
-    import yaml
-    from autoposter_vk import get_new_vk_posts
+# if __name__ == '__main__':
+#     import yaml
+#     from autoposter_vk import get_new_vk_posts
 
-    os.chdir(os.path.dirname(__file__))
+#     os.chdir(os.path.dirname(__file__))
 
-    with open('config.yaml', encoding='utf-8') as config_file:
-        app_config = yaml.load(config_file, Loader=yaml.FullLoader)
+#     with open('config.yaml', encoding='utf-8') as config_file:
+#         app_config = yaml.load(config_file, Loader=yaml.FullLoader)
 
-    os.makedirs(app_config['temp_dir'], exist_ok=True)
+#     os.makedirs(app_config['temp_dir'], exist_ok=True)
 
-    app_config['telegram']['channel_id'] = -1002282539965
-    new_posts = sorted(get_new_vk_posts(app_config), key=lambda post: post.id)
-    repost_to_tg(app_config, new_posts)
+#     app_config['telegram']['channel_id'] = -1002282539965
+#     new_posts = sorted(get_new_vk_posts(app_config), key=lambda post: post.id)
+#     repost_to_tg(app_config, new_posts)
