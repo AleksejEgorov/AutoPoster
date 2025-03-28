@@ -54,15 +54,23 @@ def get_new_vk_posts(config):
                 'Post content will be saved to %s',
                 post_dir
             )
-            photos = list(
-                map(
-                    lambda photo_data: photo_data['photo'],
-                    filter(
-                        lambda attachment: attachment['type'] == 'photo',
-                        post['attachments']
-                    )
+            photos = [
+                photo_data['photo'] for photo_data in filter(
+                    lambda attachment: attachment['type'] == 'photo',
+                    post['attachments']
                 )
-            )
+            ]
+
+            # list(
+            #     map(
+            #         lambda photo_data: photo_data['photo'],
+            #         filter(
+            #             lambda attachment: attachment['type'] == 'photo',
+            #             post['attachments']
+            #         )
+            #     )
+            # )
+
             for photo in photos:
                 photo_url = photo['orig_photo']['url']
                 photo_file = os.path.join(post_dir,f'{photo['id']}.jpg')

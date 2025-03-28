@@ -67,7 +67,7 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
         post_tags = list(filter(lambda tag: ' ' not in tag, post.tags))[0:post_tags_count]
         logger.info('Post %s selected tags: %s', post.id, post_tags)
         tags.extend(post_tags)
-        tags = list(map(lambda tag: f'#{tag}', tags))
+        tags = [f'#{tag}' for tag in tags]
         logger.debug('Final tags list: %s', tags)
         inst_text = f'{reformat_post_text(config, post, 'inst')}\n{" ".join(tags)}'
         logger.info('Post %s prepared text: %s', post.id, inst_text.replace('\n','\\n'))
@@ -186,7 +186,7 @@ if __name__ == '__main__':
 
     # example_posts = list(map(lambda post: Post(post), new_posts))
     # https://pylint.readthedocs.io/en/latest/user_guide/messages/warning/unnecessary-lambda.html
-    example_posts = list(map(Post(new_posts)))
+    example_posts = [Post(post) for post in new_posts]
 
     repost_to_instagram(app_config, example_posts)
     print(json.dumps(new_posts, cls=PostEncoder))

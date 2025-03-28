@@ -20,7 +20,8 @@ def repost_to_tg(config: dict, posts: list[Post]):
         medias = []
 
         for photo in post.photos:
-            medias.append(telebot.types.InputMediaPhoto(media=open(photo.file_path, 'rb')))
+            with open(photo.file_path, 'rb') as photo_file:
+                medias.append(telebot.types.InputMediaPhoto(media=photo_file))
 
         medias[0].caption = post_text
         medias[0].parse_mode = 'markdown'

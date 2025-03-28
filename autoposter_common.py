@@ -83,7 +83,7 @@ def get_photo_tags(config, posts: list[Post]) -> None:
                     files={'image': image},
                     timeout=10
                 )
-                
+
             logger.info(
                 '%s tags received for photo %s',
                 len(tag_response.json()['result'].get('tags')),
@@ -93,16 +93,14 @@ def get_photo_tags(config, posts: list[Post]) -> None:
             photo_tags = tag_response.json()['result'].get('tags')
             tags_string = ', '.join(
                 set(
-                    map(
-                        lambda tag_data: tag_data['tag']['en'],
-                        sorted(
-                            photo_tags,
-                            key=lambda tag_data: tag_data['confidence'],
-                            reverse=True
-                        )
+                    tag_data['tag']['en'] for tag_data in sorted(
+                        photo_tags,
+                        key=lambda tag_data: tag_data['confidence'],
+                        reverse=True
                     )
                 )
             )
+
             logger.info('Photo %s tags are: %s', photo.id, tags_string)
 
             for tag in photo_tags:
@@ -111,9 +109,10 @@ def get_photo_tags(config, posts: list[Post]) -> None:
             post_tags.extend(photo_tags)
         post.tags = list(
             set(
-                map(
-                    lambda tag_data: tag_data['tag']['en'],
-                    sorted(post_tags, key=lambda tag_data: tag_data['confidence'], reverse=True)
+                tag_data['tag']['en'] for tag_data in sorted(
+                    post_tags,
+                    key=lambda tag_data: tag_data['confidence'],
+                    reverse=True
                 )
             )
         )

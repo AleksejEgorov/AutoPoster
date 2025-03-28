@@ -13,16 +13,6 @@ class Photo:
         self.file_path = file_path
         self.tags = []
 
-    def get_tags(self):
-        '''Returns tag list'''
-        return self.tags
-
-    def get_file(self):
-        '''Returns binary file object'''
-        with open(self.file_path, mode='rb',) as file:
-            return file
-
-
 class Post:
     '''
     This class describes post with one or more photos in it
