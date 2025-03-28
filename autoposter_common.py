@@ -132,8 +132,9 @@ def reformat_post_text(config: dict, post: Post, target: str) -> str:
     Replace vk links to markdown links.
     Apply customization, described in config['replaces']
     '''
-    text = post.text
-    if not text:
+    # https://pylint.readthedocs.io/en/stable/user_guide/messages/refactor/consider-using-assignment-expr.html
+    # text = post.text
+    if not (text := post.text):
         return ''
     replaces = config['replaces']
     vk_link_pattern = re.compile(r'\[id\d+\|[\w\s]+\]')
