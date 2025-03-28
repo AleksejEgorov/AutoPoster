@@ -26,11 +26,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
         return
 
     if new_posts:
-        repost_status = {
-            'vk': False,
-            'tg': False,
-            'inst': False
-        }
+        repost_status = {'vk': False, 'tg': False, 'inst': False}
 
         repost_status[config['source']] = True
         logger.info(f'Source is {config['source']}, reposting to {repost_status.keys()}')
