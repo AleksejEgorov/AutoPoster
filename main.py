@@ -1,3 +1,7 @@
+'''
+This is main module for autoposter
+'''
+
 import os
 import time
 import logging
@@ -8,11 +12,11 @@ from autoposter_tg import repost_to_tg
 from autoposter_inst import repost_to_instagram
 
 
-def repost_cycle(config: dict) -> None:
+def repost_cycle(config: dict, logger: logging.Logger) -> None:
     '''General cycle: import from VK, repost to TG and IG'''
     if config['source'] == 'vk':
         logger.debug('Getting new posts from VK')
-        try: 
+        try:
             new_posts = sorted(get_new_vk_posts(config), key=lambda post: post.id)
         except Exception as e:
             logger.error(f'Cannot get posts from VK: {e}')
@@ -30,7 +34,7 @@ def repost_cycle(config: dict) -> None:
 
         repost_status[config['source']] = True
         logger.info(f'Source is {config['source']}, reposting to {repost_status.keys()}')
-        while False in repost_status.values():  
+        while False in repost_status.values():
             # To Telegram
             if not repost_status['tg']:
                 try:
@@ -40,7 +44,7 @@ def repost_cycle(config: dict) -> None:
                     logger.error('Error while reposting to Telegram: %s', e)
                     time.sleep(5)
             # To instagram
-            # TODO: Number of attempts
+            # Maybe number of attempts
             if not repost_status['inst']:
                 try:
                     get_photo_tags(config, new_posts)
@@ -56,19 +60,19 @@ def repost_cycle(config: dict) -> None:
 if __name__ == '__main__':
     os.chdir(os.path.dirname(__file__))
     with open('config.yaml', encoding='utf-8') as config_file:
-        config = yaml.load(config_file, Loader=yaml.FullLoader)
+        main_config = yaml.load(config_file, Loader=yaml.FullLoader)
 
-    logger = logging.getLogger(__name__)
+    main_logger = logging.getLogger(__name__)
     logging.basicConfig(
-        level=str(config['log_level']).upper(), 
-        format=config['log_format']
+        level=str(main_config['log_level']).upper(),
+        format=main_config['log_format']
     )
-    logger.info('Autoposter started')
+    main_logger.info('Autoposter started')
 
 
-    os.makedirs(config['temp_dir'], exist_ok=True)
+    os.makedirs(main_config['temp_dir'], exist_ok=True)
 
     while True:
-        repost_cycle(config)
-        logger.debug('Sleep %s', {config['pool_interval']})
-        time.sleep(config['pool_interval'])
+        repost_cycle(main_config, main_logger)
+        main_logger.debug('Sleep %s', {main_config['pool_interval']})
+        time.sleep(main_config['pool_interval'])

@@ -1,12 +1,23 @@
+'''
+This module describes classes, used in autoposter
+'''
+
 import json
 
 class Photo:
-    def __init__(self, id, file_path: str):
-        self.id = id
+    '''
+    This class describes photo in post
+    '''
+    def __init__(self, photo_id, file_path: str):
+        self.id = photo_id
         self.file_path = file_path
         self.tags = []
-        
+
+
 class Post:
+    '''
+    This class describes post with one or more photos in it
+    '''
     def __init__(self, post):
         if isinstance(post, dict):
             self.id = post.get('id')
@@ -25,15 +36,18 @@ class Post:
             self.photos = []
             self.source = None
 
-    def add_photo(self, id: int, file: str ) -> None:
-        self.photos.append(Photo(id, file))
-        
+    def add_photo(self, photo_id: int, file: str ) -> None:
+        "Add photo to post"
+        self.photos.append(Photo(photo_id, file))
+
     def __str__(self):
         return f'{self.id} {self.text} ({len(self.photos)} photos)'
-    
-    def toJson(self):
+
+    def to_json(self):
+        '''converts post to serializable json'''
         return json.dumps(self, default=lambda o: o.__dict__)
-    
+
 class PostEncoder(json.JSONEncoder):
-        def default(self, o):
-            return o.__dict__
+    '''Service class'''
+    def default(self, o):
+        return o.__dict__
