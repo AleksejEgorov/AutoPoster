@@ -33,6 +33,7 @@ load-plugins=
     pylint.extensions.redefined_variable_type,
     pylint.extensions.comparison_placement,
     pylint.extensions.broad_try_clause,
+    pylint.extensions.dict_init_mutate,
     pylint.extensions.consider_refactoring_into_while_condition,
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
@@ -100,6 +101,9 @@ enable=
 disable=
     invalid-name,
     too-few-public-methods,
+    dict-init-mutate,
+    no-member,
+    broad-exception-caught,
 
 [REPORTS]
 
