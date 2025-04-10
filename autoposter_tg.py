@@ -4,6 +4,7 @@ This module contains telegram-related functions
 
 import logging
 import telebot
+from telebot.types import InputMediaPhoto
 from autoposter_classes import Post
 from autoposter_common import reformat_post_text
 
@@ -20,8 +21,8 @@ def repost_to_tg(config: dict, posts: list[Post]):
         medias = []
 
         for photo in post.photos:
-            with open(photo.file_path, 'rb') as photo_file:
-                medias.append(telebot.types.InputMediaPhoto(media=photo_file))
+            # with open(photo.file_path, 'rb') as photo_file:
+            medias.append(InputMediaPhoto(media=photo.file_path))
 
         medias[0].caption = post_text
         medias[0].parse_mode = 'markdown'
