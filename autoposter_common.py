@@ -29,7 +29,11 @@ def get_last_json_id(config: dict, service: str) -> int:
     else:
         last_id = 0
 
-    logger.debug('Last id is %s', last_id)
+    logger.debug(
+        'Last id for service %s is %s',
+        service,
+        last_id
+    )
     return last_id
 
 def write_last_json_id(config: dict, service: str, last_id: int) -> None:
@@ -46,7 +50,12 @@ def write_last_json_id(config: dict, service: str, last_id: int) -> None:
 
     with open(last_id_file_path, 'w', encoding='utf-8') as last_id_file:
         json.dump(last_json, last_id_file)
-        logger.debug('Last id %s for service %s is written to %s', last_id, service, last_id_file_path)
+        logger.info(
+            'Last id %s for service %s is written to %s',
+            last_id,
+            service,
+            last_id_file_path
+        )
 
 def get_last_id(config):
     '''
