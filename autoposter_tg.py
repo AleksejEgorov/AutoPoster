@@ -22,7 +22,7 @@ def repost_to_tg(config: dict, posts: list[Post]):
 
         for photo in post.photos:
             # with open(photo.file_path, 'rb') as photo_file:
-            medias.append(InputMediaPhoto(media=photo.file_path))
+            medias.append(InputMediaPhoto(media=photo.url))
 
         medias[0].caption = post_text
         medias[0].parse_mode = 'markdown'
