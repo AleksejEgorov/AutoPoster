@@ -83,7 +83,7 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
             web_photo_path = '/'.join(
                 [
                     config["instagram"]['web_photo_location'],
-                    post.id,
+                    str(post.id),
                     os.path.basename(local_photo_path)
                 ]
             )
