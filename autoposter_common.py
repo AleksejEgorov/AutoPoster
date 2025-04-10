@@ -6,12 +6,47 @@ import os
 import logging
 import shutil
 import re
+import json
 import asyncio
 import requests
 from googletrans import Translator
 from autoposter_classes import Post
 
 logger = logging.getLogger(__name__)
+
+def get_last_json_id(config: dict, service: str) -> int:
+    '''
+    Get last processed post id by service from file
+    '''
+    last_id_file_path = os.path.join(config['temp_dir'], '.last.json')
+    if os.path.exists(last_id_file_path):
+        with open(last_id_file_path, encoding='utf8') as last_id_file:
+            last_json = json.load(last_id_file)
+        if service in last_json.keys():
+            last_id = last_json[service]
+        else:
+            last_id = 0
+    else:
+        last_id = 0
+
+    logger.debug('Last id is %s', last_id)
+    return last_id
+
+def write_last_json_id(config: dict, service: str, last_id: int) -> None:
+    '''
+    Write last processed post id by service to file
+    '''
+    last_id_file_path = os.path.join(config['temp_dir'], '.last.json')
+    if os.path.exists(last_id_file_path):
+        with open(last_id_file_path, encoding='utf8') as last_id_file:
+            last_json = json.load(last_id_file)
+        last_json[service] = last_id
+    else:
+        last_json = {service: last_id}
+
+    with open(last_id_file_path, 'w', encoding='utf-8') as last_id_file:
+        json.dump(last_json, last_id_file)
+        logger.debug('Last id %s for service %s is written to %s', last_id, service, last_id_file_path)
 
 def get_last_id(config):
     '''
