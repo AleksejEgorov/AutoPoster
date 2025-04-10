@@ -8,9 +8,10 @@ class Photo:
     '''
     This class describes photo in post
     '''
-    def __init__(self, photo_id, file_path: str):
+    def __init__(self, photo_id, file_path: str, url: str):
         self.id = photo_id
         self.file_path = file_path
+        self.url = url
         self.tags = []
 
 class Post:
@@ -25,7 +26,7 @@ class Post:
             self.source = post.get('source')
             self.photos = []
             for photo_dict in post.get('photos'):
-                photo = Photo(photo_dict['id'], photo_dict['file_path'])
+                photo = Photo(photo_dict['id'], photo_dict['file_path'], photo_dict['url'])
                 photo.tags = photo_dict['tags']
                 self.photos.append(photo)
         else:
@@ -35,9 +36,9 @@ class Post:
             self.photos = []
             self.source = None
 
-    def add_photo(self, photo_id: int, file: str ) -> None:
+    def add_photo(self, photo_id: int, file: str, url: str ) -> None:
         "Add photo to post"
-        self.photos.append(Photo(photo_id, file))
+        self.photos.append(Photo(photo_id, file, url))
 
     def __str__(self):
         return f'{self.id} {self.text} ({len(self.photos)} photos)'

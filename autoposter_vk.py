@@ -80,7 +80,7 @@ def get_new_vk_posts(config):
                     photo['id'],
                     photo_file
                 )
-                current_post.add_photo(photo['id'], photo_file)
+                current_post.add_photo(photo['id'], photo_file, photo_url)
 
             posts.append(current_post)
 
