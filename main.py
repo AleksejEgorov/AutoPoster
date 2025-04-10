@@ -19,7 +19,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
         try:
             new_posts = sorted(get_new_vk_posts(config), key=lambda post: post.id)
         except Exception as err:
-            logger.error('Cannot get posts from VK: %s', err)
+            logger.error('%s: Cannot get posts from VK: %s', type(err), err)
             return
     else:
         logger.error(f'Source {config['source']} is unknown')
@@ -37,8 +37,10 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
                     repost_to_tg(config, new_posts)
                     repost_status['tg'] = True
                 except Exception as err:
-                    logger.error('Error while reposting to Telegram: %s', err)
+                    logger.error('%s: Error while reposting to Telegram: %s', type(err), err)
                     time.sleep(5)
+                    raise
+
             # To instagram
             # Maybe number of attempts
             if not repost_status['inst']:
@@ -47,8 +49,9 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
                     repost_to_instagram(config, new_posts)
                     repost_status['inst'] = True
                 except Exception as err:
-                    logger.error('Error while reposting to Instagram: %s', err)
+                    logger.error('%s: Error while reposting to Instagram: %s', type(err), err)
                     time.sleep(5)
+                    raise
 
         write_last_id(config, new_posts[-1].id)
         cleanup_content(config, new_posts)

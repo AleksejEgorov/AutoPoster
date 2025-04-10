@@ -26,7 +26,11 @@ def repost_to_tg(config: dict, posts: list[Post]):
         medias[0].caption = post_text
         medias[0].parse_mode = 'markdown'
 
-        bot.send_media_group(config['telegram']['channel_id'], medias)
+        bot.send_media_group(
+            chat_id=config['telegram']['channel_id'],
+            media=medias
+        )
+
         logger.info(
             "Post id=%s (%s photos) reposted to Telegram channel %s",
             post.id,
