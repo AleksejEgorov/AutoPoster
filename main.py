@@ -26,8 +26,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
         return
 
     if new_posts:
-        if not repost_status:
-            repost_status = {'vk': False, 'tg': False, 'inst': False}
+        repost_status = {'vk': False, 'tg': False, 'inst': False}
 
         repost_status[config['source']] = True
         logger.info(f'Source is {config['source']}, reposting to {repost_status.keys()}')
@@ -55,7 +54,6 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
                     raise
 
         write_last_id(config, new_posts[-1].id)
-        repost_status = None
         cleanup_content(config, new_posts)
 
 if __name__ == '__main__':
