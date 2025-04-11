@@ -20,7 +20,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
             new_posts = sorted(get_new_vk_posts(config), key=lambda post: post.id)
         except Exception as err:
             logger.error('%s: Cannot get posts from VK: %s', type(err), err)
-            return
+            raise
     else:
         logger.error(f'Source {config['source']} is unknown')
         return
