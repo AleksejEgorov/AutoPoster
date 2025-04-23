@@ -6,6 +6,7 @@ import os
 import time
 import logging
 import yaml
+from requests import exceptions as WebErrors
 from autoposter_common import write_last_id, cleanup_content, get_photo_tags
 from autoposter_vk import get_new_vk_posts
 from autoposter_tg import repost_to_tg
@@ -18,6 +19,9 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
         logger.debug('Getting new posts from VK')
         try:
             new_posts = sorted(get_new_vk_posts(config), key=lambda post: post.id)
+        except WebErrors.ReadTimeout as err:
+            logger.error('VK API timeout %s', err)
+            return
         except Exception as err:
             logger.error('%s: Cannot get posts from VK: %s', type(err), err)
             raise
