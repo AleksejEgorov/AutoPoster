@@ -20,7 +20,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
         try:
             new_posts = sorted(get_new_vk_posts(config), key=lambda post: post.id)
         except WebErrors.ReadTimeout as err:
-            logger.error('VK API timeout %s', err)
+            logger.warning('VK API timeout %s', err)
             return
         except Exception as err:
             logger.error('%s: Cannot get posts from VK: %s', type(err), err)
