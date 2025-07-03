@@ -4,6 +4,7 @@ This module contains VK related functions
 import os
 import logging
 import urllib.request
+import requests.exceptions
 import vk
 from autoposter_classes import Post#,PostEncoder
 from autoposter_common import get_last_id, make_content_dir
@@ -19,18 +20,26 @@ def get_new_vk_posts(config):
 
     offset = 0
 
-    new = list(
-        filter(
-            lambda post: post['date'] > last_id,
-            vk_api.wall.get(
-                owner_id=config['vk']['group_id'],
-                count=100,
-                v='5.199',
-                filter='owner',
-                offset=offset
-            )['items']
+    new = []
+    try:
+        new = list(
+            filter(
+                lambda post: post['date'] > last_id,
+                vk_api.wall.get(
+                    owner_id=config['vk']['group_id'],
+                    count=100,
+                    v='5.199',
+                    filter='owner',
+                    offset=offset
+                )['items']
+            )
         )
-    )
+    except requests.exceptions.HTTPError as err:
+        logger.error(
+            'HTTP error while fetching VK posts: %s',
+            err
+        )
+        return posts
 
     if not new:
         logger.debug('No new VK posts')
