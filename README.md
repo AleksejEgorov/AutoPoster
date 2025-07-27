@@ -30,6 +30,13 @@ pip install -r requirements.txt
 deactivate
 ```
 
+Now it's time to create your own congfiguration:
+
+```bash
+cp config_sample.yaml config.yaml
+nano config.yaml
+```
+
 ### Create service
 
 First, create system user:
