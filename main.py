@@ -32,7 +32,17 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
     if new_posts:
         repost_status = {'vk': False, 'tg': False, 'inst': False}
 
+        if config['instagram']['enabled']:
+            repost_status['inst'] = False
+        if config['telegram']['enabled']:
+            repost_status['tg'] = False
+        if config['vk']['enabled']:
+            repost_status['vk'] = False
+
+        if config['telegram']['enabled']:
+            repost_status['tg'] = False
         repost_status[config['source']] = True
+
         logger.info(f'Source is {config['source']}, reposting to {repost_status.keys()}')
         while False in repost_status.values():
             # To Telegram
