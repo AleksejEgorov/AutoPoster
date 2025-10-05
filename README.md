@@ -51,7 +51,7 @@ Group=botrunner
 Type=simple
 WorkingDirectory=/opt/autoposter
 ExecStart=/opt/autoposter/.venv/bin/python3 /opt/autoposter/main.py
-Restart=on-failure
+Restart=no
 
 [Install]
 WantedBy=multi-user.target
