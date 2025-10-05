@@ -161,7 +161,7 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
             logger.info(
                 'Post %s is reposted to Instagram with ID %s',
                 post.id,
-                inst_post.json()['id']
+                inst_post.json().get('id')
             )
 
 
