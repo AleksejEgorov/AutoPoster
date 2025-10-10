@@ -125,7 +125,7 @@ def get_photo_tags(config, posts: list[Post]) -> None:
                     'https://api.imagga.com/v2/tags',
                     auth=immaga_auth,
                     files={'image': image},
-                    timeout=10
+                    timeout=30
                 )
 
             logger.info(

@@ -32,15 +32,13 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
     if new_posts:
         repost_status = {'vk': False, 'tg': False, 'inst': False}
 
-        if config['instagram']['enabled']:
+        if config['instagram']['enabled'] == True:
             repost_status['inst'] = False
-        if config['telegram']['enabled']:
+        if config['telegram']['enabled'] == True:
             repost_status['tg'] = False
-        if config['vk']['enabled']:
+        if config['vk']['enabled'] == True:
             repost_status['vk'] = False
 
-        if config['telegram']['enabled']:
-            repost_status['tg'] = False
         repost_status[config['source']] = True
 
         logger.info(f'Source is {config['source']}, reposting to {repost_status.keys()}')
