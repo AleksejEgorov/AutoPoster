@@ -6,7 +6,7 @@ import logging
 import urllib.request
 import requests.exceptions
 import vk
-from autoposter_classes import Post#,PostEncoder
+from post import Post
 from autoposter_common import get_last_id, make_content_dir
 
 logger = logging.getLogger(__name__)
@@ -69,16 +69,6 @@ def get_new_vk_posts(config):
                     post['attachments']
                 )
             ]
-
-            # list(
-            #     map(
-            #         lambda photo_data: photo_data['photo'],
-            #         filter(
-            #             lambda attachment: attachment['type'] == 'photo',
-            #             post['attachments']
-            #         )
-            #     )
-            # )
 
             for photo in photos:
                 photo_url = photo['orig_photo']['url']

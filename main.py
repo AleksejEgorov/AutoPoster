@@ -7,10 +7,8 @@ import time
 import logging
 import yaml
 from requests import exceptions as WebErrors
-from autoposter_common import write_last_id, cleanup_content, get_photo_tags
+from autoposter_common import write_last_id, cleanup_content
 from autoposter_vk import get_new_vk_posts
-from autoposter_tg import repost_to_tg
-from autoposter_inst import repost_to_instagram
 
 
 def repost_cycle(config: dict, logger: logging.Logger) -> None:
@@ -29,44 +27,68 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
         logger.error(f'Source {config['source']} is unknown')
         return
 
-    if new_posts:
-        repost_status = {'vk': False, 'tg': False, 'inst': False}
 
-        if config['instagram']['enabled'] == True:
-            repost_status['inst'] = False
-        if config['telegram']['enabled'] == True:
-            repost_status['tg'] = False
-        if config['vk']['enabled'] == True:
-            repost_status['vk'] = False
+    for post in new_posts:
+        logger.debug('Post %s has %s photos', post.id, len(post.photos))
 
-        repost_status[config['source']] = True
+        need_to_repost = {
+            'vk': False,
+            'telegram': False,
+            'instagram': False
+        }
 
-        logger.info(f'Source is {config['source']}, reposting to {repost_status.keys()}')
-        while False in repost_status.values():
+        for target in need_to_repost:
+            need_to_repost[target] = config[target]['enabled']
+
+        need_to_repost[config['source']] = True
+        logger.info(
+            'Source is %s, reposting to %s',
+            config['source'],
+            need_to_repost.keys()
+        )
+
+        try:
+            post.add_tags(config=config)
+        except Exception as err:
+            logger.error('%s: Error while adding tags to post %s: %s', type(err), post.id, err)
+            raise
+
+        while True in need_to_repost.values():
             # To Telegram
-            if not repost_status['tg']:
+            if need_to_repost['telegram']:
                 try:
-                    repost_to_tg(config, new_posts)
-                    repost_status['tg'] = True
+                    post.repost_to_tg(config)
                 except Exception as err:
                     logger.error('%s: Error while reposting to Telegram: %s', type(err), err)
                     time.sleep(5)
                     raise
 
+                need_to_repost['telegram'] = False
+
             # To instagram
-            # Maybe number of attempts
-            if not repost_status['inst']:
+            if need_to_repost['instagram']:
                 try:
-                    get_photo_tags(config, new_posts)
-                    repost_to_instagram(config, new_posts)
-                    repost_status['inst'] = True
+                    post.add_tags(config=config)
                 except Exception as err:
-                    logger.error('%s: Error while reposting to Instagram: %s', type(err), err)
-                    time.sleep(5)
+                    logger.error('%s: Error while getting tags from immaga: %s', type(err), err)
                     raise
 
-        write_last_id(config, new_posts[-1].id)
-        cleanup_content(config, new_posts)
+                attempts_left = 3
+                while attempts_left > 0:
+                    attempts_left -= 1
+                    try:
+                        post.repost_to_instagram(config)
+                    except Exception as err:
+                        logger.error('%s: Error while reposting to Instagram: %s', type(err), err)
+                        time.sleep(15)
+                        if attempts_left == 0:
+                            logger.error('No attempts left, skip reposting to Instagram')
+                            raise
+
+                need_to_repost['instagram'] = False
+
+        write_last_id(config, post.id)
+        cleanup_content(config, posts=[post])
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(__file__))

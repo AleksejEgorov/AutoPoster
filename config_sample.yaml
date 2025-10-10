@@ -1,6 +1,6 @@
 temp_dir: /opt/autoposter/temp
 # Only VK supported now, so use 'vk'
-source: vk #
+source: vk
 pool_interval: 60
 log_level: info
 log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -19,8 +19,11 @@ vk:
 instagram:
   enabled: false
   # https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/create-a-meta-app-with-instagram#api-setup-with-instagram-login
+  app_name:
+  app_id:
+  app_secret:
   app_token:
-
+  timeout: 15
   proxy:
   web_photo_location: https://ap-media.apt-1088.online
   fill_color: "#fff"
@@ -37,7 +40,7 @@ instagram:
 imagga:
   api_key:
   api_secret:
-
+  timeout: 30
 
 replaces:
   id1:
