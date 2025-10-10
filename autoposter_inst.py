@@ -127,14 +127,19 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
                     'access_token': ig_token
                 },
                 proxies=proxies,
-                timeout=10
+                timeout=30
             )
 
-            logger.info(
-                'Post %s is reposted to Instagram with ID %s',
-                post.id,
-                inst_post.json()['id']
-            )
+            try:
+                logger.info(
+                    'Post %s is reposted to Instagram with ID %s',
+                    post.id,
+                    inst_post.json()['id']
+                )
+            except Exception as err:
+                logger.error('Instagram API error: %s', inst_post.json())
+                raise
+
 
         else:
             # Single photo
@@ -155,14 +160,18 @@ def repost_to_instagram(config: dict, posts: list[Post]) -> None:
                     'access_token': ig_token
                 },
                 proxies=proxies,
-                timeout=10
+                timeout=30
             )
 
-            logger.info(
-                'Post %s is reposted to Instagram with ID %s',
-                post.id,
-                inst_post.json()['id']
-            )
+            try:
+                logger.info(
+                    'Post %s is reposted to Instagram with ID %s',
+                    post.id,
+                    inst_post.json()['id']
+                )
+            except Exception as err:
+                logger.error('Instagram API error: %s', inst_post.json())
+                raise
 
 
 if __name__ == '__main__':
