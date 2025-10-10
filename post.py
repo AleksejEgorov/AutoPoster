@@ -124,13 +124,13 @@ class Post:
         '''
         Add photo tags to post tags
         '''
-        post_tags = config['instagram']['default_tags'].copy()
-        logger.debug('Source post %s tags are %s', self.__id, post_tags)
-        custom_tags_count = config['instagram']['total_tags_count'] - len(post_tags) - 1
+        self.__tags = config['instagram']['default_tags'].copy()
+        logger.debug('Source post %s tags are %s', self.__id, self.__tags)
+        custom_tags_count = config['instagram']['total_tags_count'] - len(self.__tags) - 1
         logger.debug(
             'Post %s has %s mandatory tags, %s custom expected',
             self.__id,
-            len(post_tags),
+            len(self.__tags),
             custom_tags_count
         )
         custom_tags = []
@@ -138,8 +138,8 @@ class Post:
         for photo in self.__photos:
             custom_tags.extend(photo.get_immaga_tags(config))
 
-        post_tags.extend(list(filter(lambda tag: ' ' not in tag, custom_tags)))
-        self.__tags = list(set(post_tags))[0:config['instagram']['total_tags_count']]
+        top_post_tags = (list(filter(lambda tag: ' ' not in tag, custom_tags))[0:custom_tags_count])
+        self.__tags.extend(top_post_tags)
         self.__tags = [f'#{tag}' for tag in self.__tags]
         logger.info('Post %s final tags are %s', self.__id, self.__tags)
 
