@@ -40,7 +40,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
         for target in need_to_repost:
             need_to_repost[target] = config[target]['enabled']
 
-        need_to_repost[config['source']] = True
+        need_to_repost[config['source']] = False
         logger.info(
             'Source is %s, reposting to %s',
             config['source'],
