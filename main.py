@@ -29,7 +29,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
 
 
     for post in new_posts:
-        logger.debug('Post %s has %s photos', post.id, len(post.photos))
+        logger.info('Processing post %s (%s photos)', post.id, len(post.photos))
 
         need_to_repost = {
             'vk': False,
@@ -82,6 +82,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
 
         write_last_id(config, post.id)
         cleanup_content(config, posts=[post])
+        logger.info('Processing post %s done', post.id)
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(__file__))
