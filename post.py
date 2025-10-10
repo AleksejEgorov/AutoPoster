@@ -48,6 +48,11 @@ class Post:
         return self.__id
 
     @property
+    def photos(self):
+        ''' Return post photos '''
+        return self.__photos
+
+    @property
     def text(self):
         ''' Return post text '''
         return self.__text
