@@ -68,7 +68,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
             # To instagram
             if need_to_repost['instagram']:
                 attempts_left = 3
-                while attempts_left > 0 and need_to_repost['instagram'] == True:
+                while attempts_left > 0 and need_to_repost['instagram']:
                     attempts_left -= 1
                     try:
                         post.repost_to_instagram(config)
@@ -78,8 +78,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
                         if attempts_left == 0:
                             logger.error('No attempts left, skip reposting to Instagram')
                             raise
-
-                need_to_repost['instagram'] = False
+                    need_to_repost['instagram'] = False
 
         write_last_id(config, post.id)
         cleanup_content(config, posts=[post])

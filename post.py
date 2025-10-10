@@ -7,8 +7,8 @@ import logging
 import json
 import asyncio
 import re
-import requests
 from time import sleep
+import requests
 import telebot
 from telebot.types import InputMediaPhoto
 from googletrans import Translator
