@@ -67,12 +67,6 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
 
             # To instagram
             if need_to_repost['instagram']:
-                try:
-                    post.add_tags(config=config)
-                except Exception as err:
-                    logger.error('%s: Error while getting tags from immaga: %s', type(err), err)
-                    raise
-
                 attempts_left = 3
                 while attempts_left > 0:
                     attempts_left -= 1
