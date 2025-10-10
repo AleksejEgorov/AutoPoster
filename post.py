@@ -8,6 +8,7 @@ import json
 import asyncio
 import re
 import requests
+from time import sleep
 import telebot
 from telebot.types import InputMediaPhoto
 from googletrans import Translator
@@ -206,9 +207,12 @@ class Post:
                         'access_token': ig_token
                     },
                     proxies=proxies,
-                    timeout=10
+                    timeout=config['instagram']['timeout']
                 )
+                sleep(3) # to avoid 9007 error
+
                 child_containers.append(photo_container.json()['id'])
+
             carousel_container = requests.post(
                 f'https://graph.instagram.com/v21.0/{ig_id}/media',
                 params={
@@ -220,6 +224,8 @@ class Post:
                 proxies=proxies,
                 timeout=config['instagram']['timeout']
             )
+            sleep(3) # to avoid 9007 error
+
 
             inst_post = requests.post(
                 f'https://graph.instagram.com/v21.0/{ig_id}/media_publish',
@@ -258,6 +264,8 @@ class Post:
                 proxies=proxies,
                 timeout=config['instagram']['timeout']
             )
+            sleep(3) # to avoid 9007 error
+
             inst_post = requests.post(
                 f'https://graph.instagram.com/v21.0/{ig_id}/media_publish',
                 params={
