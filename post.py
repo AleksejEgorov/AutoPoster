@@ -172,7 +172,6 @@ class Post:
         logger.debug('Instagram user ID is %s', ig_id)
 
         # prepare text
-        self.add_tags(config=config)
         inst_text = self.__reformat_text(config, 'inst') + '\n\n' + ' '.join(self.__tags)
 
         # prepare photo list
