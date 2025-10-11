@@ -51,16 +51,11 @@ class Photo:
             attempts_left -= 1
             try:
                 with open(self.__file_path, 'rb') as image:
-                    upload_response = requests.post(
-                        'https://api.imagga.com/v2/uploads',
+                    tag_response = requests.post(
+                        'https://api.imagga.com/v2/tags',
                         auth=imagga_auth,
                         files={'image': image},
                         timeout=config['imagga']['timeout']
-                    )
-
-                    tag_response = requests.get(
-                        'https://api.imagga.com/v2/tags?image_upload_id=%s' % upload_response.json()['result']['upload_id'],
-                        auth=imagga_auth,
                     )
 
                 logger.info(
@@ -92,12 +87,20 @@ class Photo:
 
         if tag_response is None:
             logger.error(
-                'Error receiving tags for photo %s: %s',
-                self.__id,
+                'Error receiving tags for photo %s',
+                self.__id
             )
-            raise Exception('No response from imagga.com')
+            raise Exception('No valid response from imagga.com')
 
-        photo_tags = tag_response.json()['result'].get('tags')
+        try:
+            photo_tags = tag_response.json()['result'].get('tags')
+        except KeyError as err:
+            logger.error(
+                'Error parsing tags response for photo %s: %s',
+                self.__id,
+                tag_response.text
+            )
+            raise err
         tags_string = ', '.join(
             set(
                 tag_data['tag']['en'] for tag_data in sorted(
