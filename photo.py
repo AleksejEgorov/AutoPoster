@@ -63,11 +63,13 @@ class Photo:
                     len(tag_response.json()['result'].get('tags')),
                     self.__id
                 )
-            except requests.exceptions.Timeout:
+            except requests.exceptions.ConnectionError as err:
                 logger.warning(
-                    'Timeout error receiving tags for photo %s, attempts left %s',
+                    '%s error receiving tags for photo %s (attempts left %s): %s',
+                    type(err),
                     self.__id,
-                    attempts_left
+                    attempts_left,
+                    err
                 )
                 if attempts_left == 0:
                     logger.error('All attempts to receive tags for photo %s failed', self.__id)

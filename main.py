@@ -44,7 +44,7 @@ def repost_cycle(config: dict, logger: logging.Logger) -> None:
         logger.info(
             'Source is %s, reposting to %s',
             config['source'],
-            need_to_repost.keys()
+            ', '.join([key for key, val in need_to_repost.items() if val])
         )
 
         try:
