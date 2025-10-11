@@ -136,7 +136,7 @@ class Post:
         custom_tags = []
 
         for photo in self.__photos:
-            custom_tags.extend(photo.get_immaga_tags(config))
+            custom_tags.extend(photo.get_imagga_tags(config))
 
         top_post_tags = (list(filter(lambda tag: ' ' not in tag, custom_tags))[0:custom_tags_count])
         self.__tags.extend(top_post_tags)
