@@ -153,9 +153,9 @@ class Post:
                 'http': config["instagram"]["proxy"],
                 'https': config["instagram"]["proxy"]
             }
-            logger.info('Using proxy %s', config["instagram"]["proxy"])
+            logger.debug('Using proxy %s', config["instagram"]["proxy"])
         else:
-            logger.info('No proxy for Instagram will be used')
+            logger.debug('No proxy for Instagram will be used')
             proxies = None
 
         inst_me = requests.get(
