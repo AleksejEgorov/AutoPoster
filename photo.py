@@ -35,11 +35,11 @@ class Photo:
         ''' Set photo tags '''
         self.__tags = tags
 
-    def get_immaga_tags(self, config) -> list[str]:
+    def get_imagga_tags(self, config) -> list[str]:
         '''
-        Receive photo tags from immaga.com
+        Receive photo tags from imagga.com
         '''
-        immaga_auth = (config['imagga']['api_key'], config['imagga']['api_secret'])
+        imagga_auth = (config['imagga']['api_key'], config['imagga']['api_secret'])
 
         logger.info('Getting tags for photo %s', self.__id)
 
@@ -53,7 +53,7 @@ class Photo:
                 with open(self.__file_path, 'rb') as image:
                     tag_response = requests.post(
                         'https://api.imagga.com/v2/tags',
-                        auth=immaga_auth,
+                        auth=imagga_auth,
                         files={'image': image},
                         timeout=config['imagga']['timeout']
                     )
@@ -90,7 +90,7 @@ class Photo:
                 'Error receiving tags for photo %s: %s',
                 self.__id,
             )
-            raise
+            raise Exception('No response from imagga.com')
 
         photo_tags = tag_response.json()['result'].get('tags')
         tags_string = ', '.join(
