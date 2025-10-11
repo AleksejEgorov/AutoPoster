@@ -51,11 +51,16 @@ class Photo:
             attempts_left -= 1
             try:
                 with open(self.__file_path, 'rb') as image:
-                    tag_response = requests.post(
-                        'https://api.imagga.com/v2/tags',
+                    upload_response = requests.post(
+                        'https://api.imagga.com/v2/uploads',
                         auth=imagga_auth,
                         files={'image': image},
                         timeout=config['imagga']['timeout']
+                    )
+
+                    tag_response = requests.get(
+                        'https://api.imagga.com/v2/tags?image_upload_id=%s' % upload_response.json()['result']['upload_id'],
+                        auth=imagga_auth,
                     )
 
                 logger.info(
