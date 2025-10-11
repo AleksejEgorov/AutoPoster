@@ -41,7 +41,7 @@ class Photo:
         '''
         immaga_auth = (config['imagga']['api_key'], config['imagga']['api_secret'])
 
-        logger.debug(print('Processing photo %s', self.__id))
+        logger.info('Getting tags for photo %s', self.__id)
 
         attempts_left = 3
         need_retry = True
@@ -73,7 +73,7 @@ class Photo:
                 )
                 if attempts_left == 0:
                     logger.error('All attempts to receive tags for photo %s failed', self.__id)
-                    raise
+                    raise err
                 sleep(30)
             except Exception as err:
                 logger.error(
@@ -82,7 +82,7 @@ class Photo:
                     self.__id,
                     err
                 )
-                raise
+                raise err
             need_retry = False
 
         if tag_response is None:
