@@ -77,10 +77,11 @@ class Photo:
                 sleep(60)
             except Exception as err:
                 logger.error(
-                    '%s Error receiving tags for photo %s: %s',
+                    '%s Error receiving tags for photo %s: %s\n%s',
                     type(err),
                     self.__id,
-                    err
+                    err,
+                    tag_response.text if tag_response is not None else ''
                 )
                 raise err
             need_retry = False
