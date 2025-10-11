@@ -74,7 +74,7 @@ class Photo:
                 if attempts_left == 0:
                     logger.error('All attempts to receive tags for photo %s failed', self.__id)
                     raise err
-                sleep(30)
+                sleep(60)
             except Exception as err:
                 logger.error(
                     '%s Error receiving tags for photo %s: %s',
