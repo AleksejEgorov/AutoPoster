@@ -34,7 +34,7 @@ def get_new_vk_posts(config):
                 )['items']
             )
         )
-    except requests.exceptions.HTTPError as err:
+    except requests.exceptions.ConnectionError as err:
         logger.error(
             'HTTP error while fetching VK posts: %s',
             err
