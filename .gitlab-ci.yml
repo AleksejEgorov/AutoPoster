@@ -58,6 +58,13 @@ Lint code:
   tags:
     - $NODE_TAG
 
+Create run user:
+  stage: deploy
+  script:
+    - "[[ $(sudo cat /etc/passwd | grep botrunner) ]] ||  sudo useradd -r -s /bin/false botrunner"
+  tags:
+    - $NODE_TAG
+
 Stop service:
   stage: deploy
   script:
@@ -77,6 +84,7 @@ Deploy app:
     - sudo chown $RUN_USER:$RUN_GROUP $APP_DIR -R
   needs:
     - Stop service
+    - Create run user
   tags:
     - $NODE_TAG
 
