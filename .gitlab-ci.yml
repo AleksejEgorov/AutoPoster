@@ -94,7 +94,7 @@ Setup nginx:
     - sudo sed -i "s|%APP_DIR%|$APP_DIR|g" $APP_DIR/nginx.conf
     - sudo sed -i "s|%CONTENT_SITE_NAME%|$CONTENT_SITE_NAME|g" $APP_DIR/nginx.conf
     - sudo mv -f $APP_DIR/nginx.conf /etc/nginx/sites-available/$CI_PROJECT_NAME.conf
-    - "[[ -f /etc/nginx/sites-enabled/$CI_PROJECT_NAME.conf ]] || {cd /etc/nginx/sites-enabled; ln -s ../sites-available/$CI_PROJECT_NAME.conf; cd $CI_PROJECT_DIR}"
+    - "[[ -f /etc/nginx/sites-enabled/$CI_PROJECT_NAME.conf ]] || { cd /etc/nginx/sites-enabled; ln -s ../sites-available/$CI_PROJECT_NAME.conf; cd $CI_PROJECT_DIR; }"
   needs:
     - Deploy app
   tags:
