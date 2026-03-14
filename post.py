@@ -215,12 +215,12 @@ class Post:
             )
             sleep(3) # to avoid 9007 error
             logger.info(
-                'Photo container with phoro %s post result: %s',
+                'Photo container with photo %s post result: %s',
                 photo,
                 photo_container.json()
             )
 
-            child_containers.append(photo_container.json()['id'])
+            child_containers.append(photo_container)
 
         if len(child_containers) > 1:
             # Carousel
@@ -229,7 +229,9 @@ class Post:
                 params={
                     'caption': inst_text,
                     'media_type': 'CAROUSEL',
-                    'children': ','.join(child_containers),
+                    'children': ','.join(
+                        [child_container.json()['id'] for child_container in child_containers]
+                    ),
                     'access_token': ig_token
                 },
                 proxies=proxies,
