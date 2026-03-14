@@ -69,8 +69,8 @@ Deploy app:
   stage: deploy
   script:
     - sudo rm -rf $APP_DIR
-    - mkdir -p $APP_DIR
-    - cp -rf ./* $APP_DIR/
+    - sudo mkdir -p $APP_DIR
+    - sudo cp -rf ./* $APP_DIR/
     - sudo cp -f $TMP_DIR/config.yaml $APP_DIR/
     - sudo cp -rf $TMP_DIR/temp $APP_DIR/
     - sudo chmod 600 APP_DIR/config.yaml
@@ -109,7 +109,7 @@ Setup service:
 Setup cert:
   stage: deploy
   script:
-    - certbot -n --nginx -d $CONTENT_SITE_NAME
+    - sudo certbot -n --nginx -d $CONTENT_SITE_NAME
   needs:
     - Setup nginx
   tags:
