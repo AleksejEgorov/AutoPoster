@@ -61,7 +61,7 @@ Lint code:
 Stop service:
   stage: deploy
   script:
-    - systemctl stop autoposter.sevice
+    - "[[ $(sudo systemctl list-units | grep $SERVICE_NAME ) ]] && sudo systemctl stop $SERVICE_NAME || true"
   tags:
     - $NODE_TAG
 
