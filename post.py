@@ -199,30 +199,33 @@ class Post:
 
         # https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/content-publishing
         # https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media?locale=en_US
-        if len(inst_photos) > 1:
-            # Carousel
-            child_containers = []
-            for photo in inst_photos:
-                photo_container = requests.post(
-                    f'https://graph.instagram.com/v21.0/{ig_id}/media',
-                    params={
-                        'image_url': photo,
-                        'is_carousel_item': 'true',
-                        'access_token': ig_token
-                    },
-                    proxies=proxies,
-                    timeout=config['instagram']['timeout']
-                )
-                sleep(3) # to avoid 9007 error
-                logger.info(
-                    'Photo container post result: %s',
-                    photo_container.json()
-                )
 
-                child_containers.append(photo_container.json()['id'])
-
-            carousel_container = requests.post(
+        child_containers = []
+        for photo in inst_photos:
+            logger.info('Uploading photo %s', photo)
+            photo_container = requests.post(
                 f'https://graph.instagram.com/v21.0/{ig_id}/media',
+                params={
+                    'image_url': photo,
+                    'is_carousel_item': 'true',
+                    'access_token': ig_token
+                },
+                proxies=proxies,
+                timeout=config['instagram']['timeout']
+            )
+            sleep(3) # to avoid 9007 error
+            logger.info(
+                'Photo container with phoro %s post result: %s',
+                photo,
+                photo_container.json()
+            )
+
+            child_containers.append(photo_container.json()['id'])
+
+        if len(child_containers) > 1:
+            # Carousel
+            media_container = requests.post(
+                f'https://graph.facebook.com/v25.0/{ig_id}/media',
                 params={
                     'caption': inst_text,
                     'media_type': 'CAROUSEL',
@@ -232,88 +235,45 @@ class Post:
                 proxies=proxies,
                 timeout=config['instagram']['timeout']
             )
+
             sleep(3) # to avoid 9007 error
             logger.info(
-                'Carousel container post result: %s',
-                carousel_container.json()
+                'Carousel container with photos %s post result: %s',
+                child_containers,
+                media_container.json()
             )
-
-            inst_post = requests.post(
-                f'https://graph.instagram.com/v21.0/{ig_id}/media_publish',
-                params={
-                    'creation_id': carousel_container.json()['id'],
-                    'access_token': ig_token
-                },
-                proxies=proxies,
-                timeout=config['instagram']['timeout']
-            )
-            logger.info(
-                'Instagram post result: %s',
-                inst_post.json()
-            )
-
-            try:
-                logger.info(
-                    'Post %s is reposted to Instagram with ID %s',
-                    self.__id,
-                    inst_post.json()['id']
-                )
-            except Exception as err:
-                logger.error(
-                    'Instagram API error %s: %s',
-                    err,
-                    inst_post.json()
-                )
-                raise
-
-
         else:
-            # Single photo
-            photo_container = requests.post(
-                f'https://graph.instagram.com/v21.0/{ig_id}/media',
-                params={
-                    'image_url': inst_photos[0],
-                    'caption': inst_text,
-                    'access_token': ig_token
-                },
-                proxies=proxies,
-                timeout=config['instagram']['timeout']
-            )
-            sleep(3) # to avoid 9007 error
-            logger.info(
-                'Photo container post result: %s',
-                photo_container.json()
-            )
+            media_container = child_containers[0]
 
-            inst_post = requests.post(
-                f'https://graph.instagram.com/v21.0/{ig_id}/media_publish',
-                params={
-                    'creation_id': photo_container.json()['id'],
-                    'access_token': ig_token
-                },
-                proxies=proxies,
-                timeout=config['instagram']['timeout']
-            )
+        inst_post = requests.post(
+            f'https://graph.facebook.com/v25.0/{ig_id}/media_publish',
+            params={
+                'creation_id': media_container.json()['id'],
+                'access_token': ig_token
+            },
+            proxies=proxies,
+            timeout=config['instagram']['timeout']
+        )
 
+        logger.info(
+            'Instagram post result: %s',
+            inst_post.json()
+        )
+
+
+        try:
             logger.info(
-                'Instagram post result: %s',
+                'Post %s is reposted to Instagram with ID %s',
+                self.__id,
+                inst_post.json()['id']
+            )
+        except Exception as err:
+            logger.error(
+                'Instagram API error %s: %s',
+                err,
                 inst_post.json()
             )
-
-
-            try:
-                logger.info(
-                    'Post %s is reposted to Instagram with ID %s',
-                    self.__id,
-                    inst_post.json()['id']
-                )
-            except Exception as err:
-                logger.error(
-                    'Instagram API error %s: %s',
-                    err,
-                    inst_post.json()
-                )
-                raise
+            raise
 
     def repost_to_tg(self, config: dict):
         '''Repost to telegram'''
