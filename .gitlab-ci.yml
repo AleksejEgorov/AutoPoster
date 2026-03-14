@@ -81,7 +81,7 @@ Deploy app:
     - $NODE_TAG
 
 Setup nginx:
-  stage: build
+  stage: deploy
   script:
     - sudo sed -i "s|%APP_DIR%|$APP_DIR|g" $APP_DIR/nginx.conf
     - sudo sed -i "s|%CONTENT_SITE_NAME%|$CONTENT_SITE_NAME|g" $APP_DIR/nginx.conf
