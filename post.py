@@ -204,7 +204,7 @@ class Post:
         for photo in inst_photos:
             logger.info('Uploading photo %s', photo)
             photo_container = requests.post(
-                f'https://graph.facebook.com/v25.0/{ig_id}/media',
+                f'https://graph.instagram.com/v21.0/{ig_id}/media',
                 params={
                     'image_url': photo,
                     'is_carousel_item': 'true',
@@ -225,7 +225,7 @@ class Post:
         if len(child_containers) > 1:
             # Carousel
             media_container = requests.post(
-                f'https://graph.facebook.com/v25.0/{ig_id}/media',
+                f'https://graph.instagram.com/v21.0/{ig_id}/media',
                 params={
                     'caption': inst_text,
                     'media_type': 'CAROUSEL',
@@ -246,7 +246,7 @@ class Post:
             media_container = child_containers[0]
 
         inst_post = requests.post(
-            f'https://graph.facebook.com/v25.0/{ig_id}/media_publish',
+            f'https://graph.instagram.com/v21.0/{ig_id}/media_publish',
             params={
                 'creation_id': media_container.json()['id'],
                 'access_token': ig_token
