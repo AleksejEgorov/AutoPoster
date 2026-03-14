@@ -1,0 +1,14 @@
+[Unit]
+Description=Autoposter to Telegram and Instagram
+After=network.target
+
+[Service]
+User=%RUN_USER%
+Group=%RUN_GROUP%
+Type=simple
+WorkingDirectory=%APP_DIR%
+ExecStart=%APP_DIR%/.venv/bin/python3 %APP_DIR%/main.py
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

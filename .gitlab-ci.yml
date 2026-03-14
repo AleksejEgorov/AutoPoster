@@ -1,0 +1,133 @@
+stages:
+  - build
+  - test
+  - deploy
+
+workflow:
+  rules:
+    # Run pipeline only in Master branch.
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    - when: never
+
+variables:
+  PYTHON_VER: 3.12
+  TMP_DIR: /tmp/$CI_PROJECT_NAME
+  APP_DIR: /opt/$CI_PROJECT_NAME
+  SERVICE_NAME: autoposter.service
+  RUN_USER: botrunner
+  RUN_GROUP: botrunner
+  CONTENT_SITE_NAME: ap-media.apt-1088.online
+  NODE_TAG: vps-vpn-01
+
+Install packages:
+  stage: .pre
+  script:
+    - sudo apt install python$PYTHON_VER python$PYTHON_VER-venv nginx -y
+    - "[[ -f /usr/local/bin/certbot ]] || { sudo snap install --classic certbot; sudo ln -s /snap/bin/certbot /usr/local/bin/certbot; }"
+  tags:
+    - $NODE_TAG
+
+Create temp storage:
+  stage: build
+  script:
+    - mkdir -p /tmp/autoposter
+    - sudo cp -f $APP_DIR/config.yaml $TMP_DIR/
+    - sudo cp -rf $APP_DIR/temp $TMP_DIR/
+  tags:
+    - $NODE_TAG
+
+Create temp venv:
+  stage: build
+  script:
+    - python${PYTHON_VER} -m venv $TMP_DIR/.venv
+    - source $TMP_DIR/.venv/bin/activate
+    - pip install -r requirements.txt
+    - deactivate
+  tags:
+    - $NODE_TAG
+
+
+Lint code:
+  stage: test
+  script:
+    - source $TMP_DIR/.venv/bin/activate
+    - pip install pylint
+    - pylint *.py --rcfile=.pylintrc
+    - deactivate
+  tags:
+    - $NODE_TAG
+
+Stop service:
+  stage: deploy
+  script:
+    - systemctl stop autoposter.sevice
+  tags:
+    - $NODE_TAG
+
+Deploy app:
+  stage: deploy
+  script:
+    - sudo rm -rf $APP_DIR
+    - mkdir -p $APP_DIR
+    - cp -rf ./* $APP_DIR/
+    - sudo cp -f $TMP_DIR/config.yaml $APP_DIR/
+    - sudo cp -rf $TMP_DIR/temp $APP_DIR/
+    - sudo chmod 600 APP_DIR/config.yaml
+    - sudo chown $RUN_USER:$RUN_GROUP $APP_DIR -R
+  needs:
+    - Stop service
+  tags:
+    - $NODE_TAG
+
+Setup nginx:
+  stage: build
+  script:
+    - sudo sed -i "s|%APP_DIR%|$APP_DIR|g" $APP_DIR/nginx.conf
+    - sudo sed -i "s|%CONTENT_SITE_NAME%|$CONTENT_SITE_NAME|g" $APP_DIR/nginx.conf
+    - sudo mv -f $APP_DIR/nginx.conf /etc/nginx/sites-available/$CI_PROJECT_NAME.conf
+    - "[[ -f /etc/nginx/sites-enabled/$CI_PROJECT_NAME.conf ]] || {cd /etc/nginx/sites-enabled; ln -s ../sites-available/$CI_PROJECT_NAME.conf; cd $CI_PROJECT_DIR}"
+  needs:
+    - Deploy app
+  tags:
+    - $NODE_TAG
+
+Setup service:
+  stage: deploy
+  script:
+    - sudo sed -i "s|%APP_DIR%|$APP_DIR|g" $APP_DIR/$SERVICE_NAME
+    - sudo sed -i "s|%RUN_USER%|$RUN_USER|g" $APP_DIR/$SERVICE_NAME
+    - sudo sed -i "s|%RUN_GROUP%|$RUN_GROUP|g" $APP_DIR/$SERVICE_NAME
+    - sudo mv -f $APP_DIR/$SERVICE_NAME /etc/systemd/system/
+    - sudo systemctl daemon-reload
+    - sudo systemctl enable $SERVICE_NAME
+  needs:
+    - Deploy app
+  tags:
+    - $NODE_TAG
+
+Setup cert:
+  stage: deploy
+  script:
+    - certbot -n --nginx -d $CONTENT_SITE_NAME
+  needs:
+    - Setup nginx
+  tags:
+    - $NODE_TAG
+
+Start service:
+  stage: deploy
+  script:
+    - sudo systemctl start $SERVICE_NAME
+  needs:
+    - Setup service
+    - Setup cert
+  tags:
+    - $NODE_TAG
+
+Cleanup:
+  stage: .post
+  script:
+    - rm -rf $TMP_DIR
+  tags:
+    - $NODE_TAG
