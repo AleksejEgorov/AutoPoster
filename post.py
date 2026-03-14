@@ -174,6 +174,11 @@ class Post:
         # prepare text
         inst_text = self.__reformat_text(config, 'inst') + '\n\n' + ' '.join(self.__tags)
 
+        logger.info(
+            'Final text is:\n%s\n',
+            inst_text
+        )
+
         # prepare photo list
         inst_photos = []
         for photo in self.__photos:
@@ -209,6 +214,10 @@ class Post:
                     timeout=config['instagram']['timeout']
                 )
                 sleep(3) # to avoid 9007 error
+                logger.info(
+                    'Photo container post result: %s',
+                    photo_container.json()
+                )
 
                 child_containers.append(photo_container.json()['id'])
 
@@ -224,7 +233,10 @@ class Post:
                 timeout=config['instagram']['timeout']
             )
             sleep(3) # to avoid 9007 error
-
+            logger.info(
+                'Carousel container post result: %s',
+                carousel_container.json()
+            )
 
             inst_post = requests.post(
                 f'https://graph.instagram.com/v21.0/{ig_id}/media_publish',
@@ -234,6 +246,10 @@ class Post:
                 },
                 proxies=proxies,
                 timeout=config['instagram']['timeout']
+            )
+            logger.info(
+                'Instagram post result: %s',
+                inst_post.json()
             )
 
             try:
@@ -264,6 +280,10 @@ class Post:
                 timeout=config['instagram']['timeout']
             )
             sleep(3) # to avoid 9007 error
+            logger.info(
+                'Photo container post result: %s',
+                photo_container.json()
+            )
 
             inst_post = requests.post(
                 f'https://graph.instagram.com/v21.0/{ig_id}/media_publish',
@@ -274,6 +294,12 @@ class Post:
                 proxies=proxies,
                 timeout=config['instagram']['timeout']
             )
+
+            logger.info(
+                'Instagram post result: %s',
+                inst_post.json()
+            )
+
 
             try:
                 logger.info(
