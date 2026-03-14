@@ -2,8 +2,8 @@
 This class describes photo in post
 '''
 import logging
-import requests
 from time import sleep
+import requests
 from PIL import Image, ImageOps
 
 logger = logging.getLogger(__name__)
@@ -91,7 +91,7 @@ class Photo:
                 'Error receiving tags for photo %s',
                 self.__id
             )
-            raise Exception('No valid response from imagga.com')
+            raise ValueError('No valid response from imagga.com')
 
         try:
             photo_tags = tag_response.json()['result'].get('tags')
