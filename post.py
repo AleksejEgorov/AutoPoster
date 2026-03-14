@@ -204,7 +204,7 @@ class Post:
         for photo in inst_photos:
             logger.info('Uploading photo %s', photo)
             photo_container = requests.post(
-                f'https://graph.instagram.com/v21.0/{ig_id}/media',
+                f'https://graph.facebook.com/v25.0/{ig_id}/media',
                 params={
                     'image_url': photo,
                     'is_carousel_item': 'true',
