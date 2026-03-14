@@ -77,7 +77,12 @@ Deploy app:
   script:
     - sudo rm -rf $APP_DIR
     - sudo mkdir -p $APP_DIR
-    - sudo cp -rf ./* $APP_DIR/
+    - sudo chown gitlab-runner:gitlab-runner $APP_DIR
+    - cp -rf ./* $APP_DIR/
+    - python${PYTHON_VER} -m venv $APP_DIR/.venv
+    - source $APP_DIR/.venv/bin/activate
+    - pip install -r $APP_DIR/requirements.txt
+    - deactivate
     - "[[ -f $TMP_DIR/config.yaml ]] && { sudo cp -f $TMP_DIR/config.yaml $APP_DIR/; } || { echo WARNING: Config not existed; sudo cp $APP_DIR/config_sample.yaml $APP_DIR/config.yaml; }"
     - "[[ -d $TMP_DIR/temp ]] && { sudo cp -rf $TMP_DIR/temp $APP_DIR/; } || { echo WARNING: temp directory not existed; sudo mkdir -p $APP_DIR/temp/content; echo 0 | sudo tee $APP_DIR/temp/.last; }"
     - sudo chmod 600 $APP_DIR/config.yaml
@@ -136,6 +141,6 @@ Start service:
 Cleanup:
   stage: .post
   script:
-    - rm -rf $TMP_DIR
+    - sudo rm -rf $TMP_DIR
   tags:
     - $NODE_TAG
