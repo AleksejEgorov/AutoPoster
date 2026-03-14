@@ -32,8 +32,8 @@ Create temp storage:
   stage: build
   script:
     - mkdir -p /tmp/autoposter
-    - sudo cp -f $APP_DIR/config.yaml $TMP_DIR/
-    - sudo cp -rf $APP_DIR/temp $TMP_DIR/
+    - "[[ -f $APP_DIR/config.yaml ]] && sudo cp -f $APP_DIR/config.yaml $TMP_DIR/ || true"
+    - "[[ -d $APP_DIR/temp ]] && sudo cp -rf $APP_DIR/temp $TMP_DIR/ || true"
   tags:
     - $NODE_TAG
 
@@ -71,8 +71,8 @@ Deploy app:
     - sudo rm -rf $APP_DIR
     - sudo mkdir -p $APP_DIR
     - sudo cp -rf ./* $APP_DIR/
-    - sudo cp -f $TMP_DIR/config.yaml $APP_DIR/
-    - sudo cp -rf $TMP_DIR/temp $APP_DIR/
+    - "[[ -f $TMP_DIR/config.yaml ]] && sudo cp -f $TMP_DIR/config.yaml $APP_DIR/ || {echo WARNING: Config not existed; sudo cp $APP_DIR/config_sample.yaml $APP_DIR/sample.yaml;}"
+    - "[[ -d $TMP_DIR/temp ]] && sudo cp -rf $TMP_DIR/temp $APP_DIR/ || {echo WARNING: temp directory not existed; sudo mkdir -p $APP_DIR/temp/content; echo 0 | sudo tee $APP_DIR/temp/.last}"
     - sudo chmod 600 APP_DIR/config.yaml
     - sudo chown $RUN_USER:$RUN_GROUP $APP_DIR -R
   needs:
