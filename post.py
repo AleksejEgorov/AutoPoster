@@ -200,30 +200,31 @@ class Post:
         # https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/content-publishing
         # https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media?locale=en_US
 
-        child_containers = []
-        for photo in inst_photos:
-            logger.info('Uploading photo %s', photo)
-            photo_container = requests.post(
-                f'https://graph.instagram.com/v21.0/{ig_id}/media',
-                params={
-                    'image_url': photo,
-                    'is_carousel_item': 'true',
-                    'access_token': ig_token
-                },
-                proxies=proxies,
-                timeout=config['instagram']['timeout']
-            )
-            sleep(3) # to avoid 9007 error
-            logger.info(
-                'Photo container with photo %s post result: %s',
-                photo,
-                photo_container.json()
-            )
-
-            child_containers.append(photo_container)
-
-        if len(child_containers) > 1:
+        if len(inst_photos) > 1:
             # Carousel
+            child_containers = []
+
+            for photo in inst_photos:
+                logger.info('Uploading photo %s', photo)
+                photo_container = requests.post(
+                    f'https://graph.instagram.com/v21.0/{ig_id}/media',
+                    params={
+                        'image_url': photo,
+                        'is_carousel_item': 'true',
+                        'access_token': ig_token
+                    },
+                    proxies=proxies,
+                    timeout=config['instagram']['timeout']
+                )
+                sleep(3) # to avoid 9007 error
+                logger.info(
+                    'Photo container with photo %s post result: %s',
+                    photo,
+                    photo_container.json()
+                )
+
+                child_containers.append(photo_container)
+
             media_container = requests.post(
                 f'https://graph.instagram.com/v21.0/{ig_id}/media',
                 params={
@@ -245,7 +246,23 @@ class Post:
                 media_container.json()
             )
         else:
-            media_container = child_containers[0]
+            media_container = requests.post(
+                f'https://graph.instagram.com/v21.0/{ig_id}/media',
+                params={
+                    'image_url': inst_photos[0],
+                    'caption': inst_text,
+                    'access_token': ig_token
+                },
+                proxies=proxies,
+                timeout=config['instagram']['timeout']
+            )
+            sleep(3) # to avoid 9007 error
+
+            logger.info(
+                'Single photo container with photo %s post result: %s',
+                inst_photos[0],
+                media_container.json()
+            )
 
         inst_post = requests.post(
             f'https://graph.instagram.com/v21.0/{ig_id}/media_publish',
